@@ -1,32 +1,44 @@
-// import React from 'react'
+import { useState } from "react";
 
-const Square =({ value })=>{
 
-    function handleClick() {
-        console.log('tic tac toe');
-    }
+interface SquareProps{
+    value:string|null
+    onSquareClick:()=>void
+}
 
+const Square:React.FC<SquareProps>=({value,onSquareClick})=>{
     return (
-        <button className="border m-3 p-3 " onClick={handleClick}>{value}</button>
+        <button className="" onClick={onSquareClick}>{value}</button>
     )
 }
 
-const game = () => {
-  return (
-    <div className="flex justify-center items-center h-screen w-screen">
-        <div className=" grid grid-cols-3">
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-            <Square />
-        </div>
-    </div>
-  )
-}
+const Board=()=>{
+    const [xIsNext, setXToNext] = useState(true);
+    const [squares, setSquares] = useState(Array(9).fill(null))
 
-export default game
+    const handleClick=(i)=>{
+        if(findWinner(squares)|| squares[i]){
+            return
+        }
+
+        const nextSquares = squares.slice();
+
+        (xIsNext)?nextSquares[i]='X':nextSquares[i]='O'
+
+        setSquares(nextSquares);
+        setXToNext(!xIsNext)
+    }
+
+    const winner = findWinner(squares);
+    let status;
+    winner?status='Winner: '+ winner: status= 'Next player is: '+(xIsNext?'x':'O')
+
+    return (
+        <>
+            <div>{status}</div>
+            <div>
+                <Square value={squares[0]} onSquareClick={()=>handleClick(0)}/>
+            </div>
+        </>
+    )
+}
